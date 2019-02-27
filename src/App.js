@@ -4,7 +4,6 @@ import "./App.css";
 
 function App() {
   const [todos, setTodos] = useState([{ text: 'milk', isDone: false }, { text: 'bread', isDone: true }]);
-
   const addTodo = text => {
     // take a copy of current todos and add a new todo obj
     const newTodos = [...todos, { text: text, isDone: false }];
@@ -50,10 +49,30 @@ function App() {
 
 function TodoForm(props) {
   const [newTodo, setNewTodo] = useState("");
+  const [data, setData] = useState([]);
+
+  async function fetchComment(url) {
+    const response = await fetch(url)
+    const result = await response.json()
+    if (result.type === 'success') {
+      setData(result.value.joke)
+    }
+  }
+  //componentDidMount in hooks 
+  useEffect(
+    () => {
+      fetchComment('http://api.icndb.com/jokes/random')
+    },
+    //TODO
+    //second argument is what triggers this effect to be called or not.
+    //if the variable inside [] changes the effect will run
+    //if [] is empty it will only run one time, after the first render!
+    [newTodo]
+  )
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!newTodo) {
+    if (newTodo === "") {
       alert('empty todo');
       // breaks this operation
       return;
@@ -64,10 +83,19 @@ function TodoForm(props) {
     setNewTodo('')
   }
 
+  const handleRandom = () => {
+    setNewTodo(data);
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
-      <input className="input" type="text" placeholder="add new todo" value={newTodo} onChange={e => setNewTodo(e.target.value)} />
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input className="input" type="text" placeholder="add new todo" value={newTodo} onChange={e => setNewTodo(e.target.value)} />
+
+      </form>
+      <button onClick={handleRandom}>try your luck :D</button>
+    </div>
+
   )
 }
 // props can be also be destructured like this => TodoItem({propName}) & fn components can be made as () => fns
@@ -85,6 +113,5 @@ const TodoItem = ({ todo, index, markDone, deleteTodo }) => {
     </div>
   )
 }
-
 
 export default App;

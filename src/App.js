@@ -93,7 +93,7 @@ function TodoForm(props) {
         <input className="input" type="text" placeholder="add new todo" value={newTodo} onChange={e => setNewTodo(e.target.value)} />
 
       </form>
-      <button onClick={handleRandom}>try your luck :D</button>
+       <button onClick={handleRandom}>send todo list</button> 
     </div>
 
   )
